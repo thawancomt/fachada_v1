@@ -29,7 +29,7 @@ function BuildingDraw({ rows, columns, index, inverseY, inverseX }: BuildingDraw
         const elements: JSX.Element[] = [];
 
         initialGrid.forEach((row, rowIndex) => {
-            row.forEach((col, colIndex) => {
+            row.forEach((_, colIndex) => {
                 const indexY = String(inverseY ? (rows - rowIndex) : rowIndex + 1);
                 const indexX = String(inverseX ? numberToLetters(columns - colIndex - 1) : numberToLetters(colIndex));
                 elements.push(

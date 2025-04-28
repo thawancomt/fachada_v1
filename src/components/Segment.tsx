@@ -121,7 +121,7 @@ function Segment({ index, corX, corY }: SegmentProps) {
                 className={`${stateStyles[currentState]}
                     w-full h-full flex items-center justify-center
                     cursor-pointer transition-all shadow-sm
-                    hover:shadow-lg hover:scale-105 active:scale-100
+                    hover:shadow-lg hover:scale-95 active:scale-100
                     rounded-lg aspect-square relative group`} // Added relative and group
                 onClick={openPopup}
                 title={`Segment ${index} (State: ${currentState})${hasNote ? ' - Has Note' : ''}`} // Tooltip

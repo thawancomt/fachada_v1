@@ -1,8 +1,6 @@
 
 import './output.css'
 import NewFacadeCard from "./components/NewFacedeCard.tsx";
-import BuildingDraw from './components/BuildingDraw.tsx';
-import React, { useEffect } from 'react';
 
 function App() {
 
