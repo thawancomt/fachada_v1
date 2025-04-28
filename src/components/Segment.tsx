@@ -121,7 +121,7 @@ function Segment({ index, corX, corY }: SegmentProps) {
                 className={`${stateStyles[currentState]}
                     w-full h-full flex items-center justify-center
                     cursor-pointer transition-all shadow-sm
-                    hover:shadow-lg hover:scale-95 active:scale-100
+                    hover:shadow-lg active:scale-100
                     rounded-lg aspect-square relative group`} // Added relative and group
                 onClick={openPopup}
                 title={`Segment ${index} (State: ${currentState})${hasNote ? ' - Has Note' : ''}`} // Tooltip
@@ -172,20 +172,20 @@ function Segment({ index, corX, corY }: SegmentProps) {
                         <div className="grid grid-cols-3 gap-3 mb-6">
                             {(VALID_STATES).map(state => (
                                 <button
-                                    key={state}
-                                    onClick={() => handleSetState(state)}
-                                    className={`p-3 rounded-lg font-medium  transition-all text-sm focus:outline-none focus:ring-2 focus:ring-offset-1
-                                        ${currentState === state
-                                            ? `${stateStyles[state]} text-white shadow-md ring-2 ring-black`
-                                            : `bg-${state === 'finished' ? 'green' : state === 'pending' ? 'yellow' : 'red'}-100
-                                               hover:bg-${state === 'finished' ? 'green' : state === 'pending' ? 'yellow' : 'red'}-200
-                                               text-${state === 'finished' ? 'green' : state === 'pending' ? 'yellow' : 'red'}-300
-                                               focus:ring-${state === 'finished' ? 'green' : state === 'pending' ? 'yellow' : 'red'}-500`
-                                        }`
-                                    }
-                                >
-                                    {state.charAt(0).toUpperCase() + state.slice(1)}
-                                </button>
+                                key={state}
+                                onClick={() => handleSetState(state)}
+                                className={`p-3 rounded-lg font-medium transition-all text-sm focus:outline-none focus:ring-2 focus:ring-offset-1
+                                    ${currentState === state
+                                        ? `${stateStyles[state]} text-white shadow-md ring-2 ring-black/20` // Active state style
+                                        : `${state === "error" ? "bg-red-200 text-red-800" : "bg-gray-200 text-gray-800"} hover:bg-opacity-80
+                                        ${state === "finished" ? "bg-green-200 text-green-800" : ""}
+                                        ${state === "pending" ? "bg-yellow-200 text-yellow-800" : ""} // Inactive state style
+                                        ` // Inactive state style
+                                    }`
+                                }
+                            >
+                                {state.charAt(0).toUpperCase() + state.slice(1)} {/* Capitalize */}
+                            </button>
                             ))}
                         </div>
 
