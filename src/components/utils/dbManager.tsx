@@ -56,3 +56,4 @@ class ORM {
 }
 
 export const dbManager = new ORM();
+export type {FacadeOptions}

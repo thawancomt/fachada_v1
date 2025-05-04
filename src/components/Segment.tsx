@@ -87,7 +87,9 @@ function Segment({ index, corX, corY, applyAllY, applyAllX, allowEdit}: SegmentP
     const [applyX, setApplyX] = useState<boolean>(false);
 
 
-    const [showPopUp, setShowPopUp] = allowEdit ? useState(false) : [false, () => { }];
+    const [showPopUp, setShowPopUp] = useState(false);
+
+
     const noteRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -95,6 +97,13 @@ function Segment({ index, corX, corY, applyAllY, applyAllX, allowEdit}: SegmentP
             noteRef.current.focus();
         }
     }, [showPopUp]);
+
+
+    useEffect( () => {
+        if (!allowEdit) {
+            setShowPopUp(false);
+        }
+    }, [showPopUp])
 
     useEffect(() => {
         setCurrentState(getInitialState());

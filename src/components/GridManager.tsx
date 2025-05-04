@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Segment from "./Segment";
 
 import numberToLetters from "./utils/numberToLetter";
+
+import { dbManager } from "./utils/dbManager";
 
 interface GridManagerProps {
     rows: number;
@@ -10,12 +12,23 @@ interface GridManagerProps {
     inverseY?: boolean;
     inverseX?: boolean;
     onlyNumbersIndex?: boolean;
-    allowEdit?: boolean; 
+    allowEdit?: boolean;
+    facadeName?: string;
 
 }
 
-function GridManager({ rows, columns, reverseIndex, inverseY, inverseX, onlyNumbersIndex, allowEdit}: GridManagerProps) {
+function GridManager({ rows, columns, reverseIndex, inverseY, inverseX, onlyNumbersIndex, allowEdit, facadeName }: GridManagerProps) {
 
+
+    function initGrid() {
+        const options = dbManager.getFacade(facadeName || "");
+        console.log("Options: ", options);
+        
+    }
+
+    useEffect(() => {
+        initGrid();
+    }, [facadeName]);
 
     function getIndex(x: number, y: number) {
         let temporaryIndex = {
@@ -42,7 +55,7 @@ function GridManager({ rows, columns, reverseIndex, inverseY, inverseX, onlyNumb
     }
 
     return (
-        <div className="w-full " style={
+        <div className="" style={
             {
                 display: "grid",
                 gridTemplateColumns: `repeat(${columns}, 1fr)`,

@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FacadeLoader from "./utils/facadeLoader"; // Assumindo que está correto
 import { motion, AnimatePresence } from "framer-motion";
 import NewFacadeSettingsPopUp from "./popUps/newFacadeSettingsPopUp"; // Assumindo que está correto
 import { PlusIcon, BuildingLibraryIcon } from '@heroicons/react/24/solid'; // Exemplo com Heroicons
+import { dbManager, FacadeOptions } from "./utils/dbManager";
+import GridManager from "./GridManager";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
 function StartFacade() {
     const facades = FacadeLoader(); // Você pode querer carregar isso dentro de um useEffect
 
     const [newFacadePopup, setNewFacadePopup] = React.useState<boolean>(false);
+
+    const [facadeName, setFacadeName] = React.useState<string>("");
+
+    const [options, setOptions] = React.useState<FacadeOptions | null>(null)
+
+    useEffect(() => {
+        console.log("NEW_: ", options);
+
+    }, [options])
 
     // Variantes para animação dos cards (opcional, para escalonar a entrada)
     const cardVariants = {
@@ -25,7 +37,11 @@ function StartFacade() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }} // Stagger effect
             >
-                <button className="w-full text-left px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150 ease-in-out group">
+                <button onClick={() => {
+                    setFacadeName(key);
+                    setOptions(JSON.parse(JSON.stringify(facades[key]))); // Faz uma cópia profunda do objeto para evitar mutações
+                }}
+                    className="w-full text-left px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150 ease-in-out group">
                     <div className="flex items-center space-x-3">
                         <BuildingLibraryIcon className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
                         <span className="font-medium text-gray-700 group-hover:text-indigo-700 transition-colors truncate">
@@ -42,11 +58,6 @@ function StartFacade() {
         <AnimatePresence>
             {/* Container Principal */}
             <motion.div
-                // Animação geral da página (pode remover se animar os cards individualmente)
-                // initial={{ opacity: 0 }}
-                // animate={{ opacity: 1 }}
-                // exit={{ opacity: 0 }}
-                // transition={{ duration: 0.4 }}
                 className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 p-4 sm:p-8 md:p-12" // Fundo gradiente sutil, padding responsivo
             >
                 <div className="w-full max-w-4xl space-y-8"> {/* Limita a largura e adiciona espaço entre os elementos filhos */}
@@ -104,9 +115,35 @@ function StartFacade() {
 
                 </div>
                 {newFacadePopup && <NewFacadeSettingsPopUp onClose={() => setNewFacadePopup(false)} />}
+
+                <motion.div
+                    className="w-full max-w-4xl mt-8 bg-white shadow-lg rounded-xl p-6 overflow-auto" // Card styling
+                    layout>
+                    <TransformWrapper
+                        limitToBounds={false}
+                        initialScale={0.5}
+                        minScale={0.1}
+                        disablePadding={true}
+                    >
+                        <TransformComponent
+                            wrapperClass="w-full h-full"
+                            contentClass="flex items-center justify-center w-max h-max"
+                        >
+                            <GridManager
+                                facadeName={facadeName}
+                                rows={options?.rows || 3}
+                                columns={options?.columns || 3}
+                            />
+                        </TransformComponent>
+
+                    </TransformWrapper>
+                </motion.div>
+
+
             </motion.div>
 
-            
+
+
 
         </AnimatePresence>
     );

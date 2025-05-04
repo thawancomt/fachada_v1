@@ -133,21 +133,14 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
                             <TransformWrapper
                                 initialScale={0.5} // Ajuste conforme necessário
                                 minScale={0.1}
-                                maxScale={5} // Defina um maxScale razoável
-                                // initialPositionX={0} // Removido - Deixa centralizar
-                                // initialPositionY={0} // Removido - Deixa centralizar
-                                disablePadding={true} // Mantém o pan/zoom livre sem limites de borda da biblioteca
-                                limitToBounds={false} // Garante que pode mover para fora da vista inicial
-                            // wheel={{ step: 0.1 }} // Ajuste a sensibilidade do scroll do mouse se necessário
-                            // pinch={{ step: 5 }}   // Ajuste a sensibilidade do pinch se necessário
+                                maxScale={5}
+                                disablePadding={true}
+                                limitToBounds={false}
                             >
-                                {({ zoomIn, zoomOut, resetTransform, centerView, setTransform, ...rest }) => (
-                                    // O `centerView()` pode ser útil para um botão de reset, centraliza baseado no conteúdo atual
+                                {(
                                     <TransformComponent
-                                        // Estas classes ajudam a garantir que o componente transformado
-                                        // e seu conteúdo interno se comportem bem dentro do espaço.
-                                        wrapperClass="w-full h-full" // Faz o wrapper interno ocupar todo o espaço do TransformWrapper
-                                        contentClass="flex items-center justify-center w-max h-max" // Centraliza o GridManager dentro da área de transformação e permite que ele tenha seu tamanho natural
+                                        wrapperClass="w-full h-full"
+                                        contentClass="flex items-center justify-center w-max h-max"
                                     >
                                         <GridManager
                                             rows={rows}
@@ -156,12 +149,12 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
                                             inverseY={indexY}
                                             inverseX={indexX}
                                             onlyNumbersIndex={onlyNumbersIndex}
-                                            allowEdit={false} // Set to false for preview
+                                            allowEdit={false}
                                         />
                                     </TransformComponent>
                                 )}
                             </TransformWrapper> :
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-500"> {/* Placeholder text */}
+                            <div className="absolute inset-0 flex items-center justify-center text-gray-500">
                                 <p className="text-sm">Adicione as dimensões para visualizar a grade.</p>
                             </div>
                         }
