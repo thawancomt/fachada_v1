@@ -63,22 +63,19 @@ function BuildingDraw({ rows, columns, index, inverseY, inverseX, onlyNumbersInd
 
                         applyAllX={(w, h) => {
                             for (let row = 0; row < rows; row++) {
-                                for (let col = 0; col < columns; col++) {
-                                    if (col === colIndex) {
-                                        Cookies.set(`segmentArea:x${row}y${col}`, JSON.stringify({ width: w, height: h }), { expires: 15 });
-
+                                if (row === rowIndex) {
+                                    for (let col = 0; col < columns; col++) {
+                                        Cookies.set(`segmentArea:x${col}y${row}`, JSON.stringify({ width: w, height: h }), { expires: 15 });
                                     }
                                 }
                             }
 
-
-
                         }}
 
                         applyAllY={(w, h) => {
-                            for (let row = 0; row < columns; row++) {
-                                for (let col = 0; col < rows; col++) {
-                                    if (row === rowIndex) {
+                            for (let row = 0; row < rows; row++) {
+                                for (let col = 0; col < columns; col++) {
+                                    if (col === colIndex) {
                                         Cookies.set(`segmentArea:x${row}y${col}`, JSON.stringify({ width: w, height: h }), { expires: 15 });
 
                                     }

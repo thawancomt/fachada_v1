@@ -1,12 +1,14 @@
 
 import './output.css'
-import NewFacadeCard from "./components/NewFacedeCard.tsx";
+
+import StartFacade from './components/StartFacade'
 
 function App() {
 
   return (
-    <div className="w-full min-h-screen bg-background">
-      <NewFacadeCard />
+    <div className="w-full ">
+      
+      <StartFacade />
     </div>
   )
 }

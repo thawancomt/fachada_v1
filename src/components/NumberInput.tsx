@@ -1,8 +1,8 @@
 
 
 interface NumberInputProps {
-    value: number;
-    onChange: (value: number) => void;
+    value?: number;
+    onChange?: (value: number) => void;
     label?: string;
 }
 
@@ -17,10 +17,10 @@ function NumberInput({ value, onChange, label}: NumberInputProps) {
     return (
         <div className={`${label ? "!w-full" : " items-start"} flex flex-col items-center`}>
             <input
-                type="text"
+                type="number"
                 inputMode="numeric"
-                value={CleanNumber(value)}
-                onChange={(e) => { onChange(CleanNumber(Number(e.target.value))) }}
+                value={CleanNumber(value || 0)}
+                onChange={(e) => { onChange && onChange(CleanNumber(Number(e.target.value))) }}
                 placeholder="0"
                 className="input-control-v1 w-1/2 min-w-fit text-center m-2"
             />

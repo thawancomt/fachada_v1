@@ -11,6 +11,7 @@ interface SegmentProps {
     index: string;
     corX?: number;
     corY?: number;
+    allowEdit?: boolean;
 
     applyAllY?: (w: number, h: number) => void;
     applyAllX?: (w: number, h: number) => void;
@@ -38,7 +39,7 @@ const stateStyles: Record<SegmentState, string> = {
     error: "bg-gradient-to-br from-red-400 to-red-500",
 };
 
-function Segment({ index, corX, corY, applyAllY, applyAllX }: SegmentProps) {
+function Segment({ index, corX, corY, applyAllY, applyAllX, allowEdit}: SegmentProps) {
     const stateCookieKey = getStateCookieKey(corX, corY);
     const noteCookieKey = getNoteCookieKey(corX, corY);
     const areaCookieKey = getAreaCookieKey(corX, corY);
@@ -86,7 +87,7 @@ function Segment({ index, corX, corY, applyAllY, applyAllX }: SegmentProps) {
     const [applyX, setApplyX] = useState<boolean>(false);
 
 
-    const [showPopUp, setShowPopUp] = useState(false);
+    const [showPopUp, setShowPopUp] = allowEdit ? useState(false) : [false, () => { }];
     const noteRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {

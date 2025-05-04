@@ -14,12 +14,14 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.4",
     "framer-motion": "^12.9.2",
     "gh-pages": "^6.3.0",
     "js-cookie": "^3.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-zoom-pan-pinch": "^3.7.0",
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
