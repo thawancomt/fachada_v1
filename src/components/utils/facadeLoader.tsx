@@ -1,4 +1,4 @@
-function FacadeLoader() : object[] {
+function FacadeLoader() : Record<string, any> {
 
 
     const facadesItems = JSON.parse(localStorage.getItem('facades') || '[]');

@@ -34,24 +34,39 @@ class ORM {
 
     // Set or update a facade without losing the rest
     setNewFacade(options: FacadeOptions) {
+
+        if (this.checkIfFacadeExists(options.facadeName)) {
+            if (!window.confirm("Uma fachada com esse nome já existe. Deseja sobrescrever?")) {
+                return false;
+            }
+        }
+
         const all = this.getAllFacades();
 
         all[options.facadeName] = options;
 
         window.localStorage.setItem("facades", JSON.stringify(all));
 
-        if (this.checkIfFacadeExists(options.facadeName)) {
-            return true;
-        } else {
-            console.error("Failed to set new facade: ", options.facadeName);
-            return false;
-        }
+        return true;
 
     }
 
     checkIfFacadeExists(facadeName: string) : boolean {
         const all = this.getAllFacades();
         return all[facadeName] !== undefined;
+    }
+
+    deleteFacade(facadeName : string) {
+
+        if (!this.checkIfFacadeExists(facadeName)) {
+            console.error("Facade does not exist: ", facadeName);
+            return false;
+        }
+
+        const all = this.getAllFacades();
+        delete all[facadeName];
+        window.localStorage.setItem("facades", JSON.stringify(all));
+        return true;
     }
 }
 
