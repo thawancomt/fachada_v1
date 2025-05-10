@@ -1,65 +1,77 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"; // Added useCallback
 import Cookies from "js-cookie";
 import NumberInput from "./NumberInput";
+import { dbManager } from "./utils/dbManager";
 
 import { createPortal } from "react-dom";
 
 import {
     CheckIcon,
-    TrashIcon,
     XMarkIcon
 
 } from "@heroicons/react/24/solid";
 
 import { motion } from "framer-motion";
 
-// Define valid states type and constant
+
 type SegmentState = "finished" | "pending" | "error";
 const VALID_STATES: SegmentState[] = ["finished", "pending", "error"];
 const DEFAULT_STATE: SegmentState = "pending";
+const stateStyles: Record<SegmentState, string> = {
+    finished: "bg-green-500",
+    pending: "bg-yellow-500",
+    error: "bg-red-500",
+};
 
 interface SegmentProps {
-    index: string;
-    corX?: number;
-    corY?: number;
+    index: { x: number; y: number };
+    gridRepresentation: string;
     allowEdit?: boolean;
+    facadeName: string;
 
 }
 
-
-
-function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
+function Segment({ index, allowEdit, gridRepresentation, facadeName }: SegmentProps) {
 
     const [showPopUp, setShowPopUp] = useState(false);
 
 
     const noteRef = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => {
-        if (showPopUp && noteRef.current) {
-            noteRef.current.focus();
-        }
-    }, [showPopUp]);
-
-
-
-
     const closePopup = useCallback(() => {
         setShowPopUp(false);
     }, []);
 
     const openPopup = useCallback(() => {
-        // Only allow opening if coordinates are defined
-        if (corX !== undefined && corY !== undefined) {
+        if (index.x !== undefined && index.y !== undefined) {
             setShowPopUp(true);
         } else {
             console.warn("Cannot open popup: Coordinates are undefined.");
         }
-    }, [corX, corY]);
+    }, [index.x, index.y]);
 
+    const [state, setState] = useState(dbManager.getSegmentState(facadeName, { x: index.x, y: index.y }) || DEFAULT_STATE);
+    const [segmenteNote, setSegmentNote] = useState(dbManager.getSegmentNote(facadeName, { x: index.x, y: index.y }) || "");
+    const [{ width, height }, setSize] = useState(dbManager.getSegmentArea(facadeName, { x: index.x, y: index.y }) || { width: 0, height: 0 });
 
+    useEffect(() => {
+        dbManager.setSegmentState(facadeName, { x: index.x, y: index.y }, state || DEFAULT_STATE);
+    }, [state]);
 
+    useEffect(() => {
+        dbManager.setSegmentNote(facadeName, { x: index.x, y: index.y }, segmenteNote)
+    }, [segmenteNote]);
 
+    useEffect(() => {
+        dbManager.setSegmentArea(facadeName, { x: index.x, y: index.y }, { width, height })
+    }, [width, height]);
+
+    useEffect(() => {
+        setState(dbManager.getSegmentState(facadeName, { x: index.x, y: index.y }) || DEFAULT_STATE)
+        setSegmentNote(dbManager.getSegmentNote(facadeName, { x: index.x, y: index.y }) || "")
+        setSize(dbManager.getSegmentArea(facadeName, { x: index.x, y: index.y }) || { width: 0, height: 0 })
+
+    }, [facadeName, index.x, index.y])
 
     const popupContainer = <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -83,10 +95,14 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
                 </svg>
             </button>
 
+            <section>
+                <h1 className="text-2xl text-blue-600 my-2 font-semibold">{facadeName}</h1>
+            </section>
+
             <h2 className="text-xl font-semibold text-gray-800 mb-5 pr-8">
-                Editar Placa <span className="text-blue-600 font-bold">#{index}</span>
-                {corX !== undefined && corY !== undefined && (
-                    <span className="text-sm text-gray-500 ml-2">(colocar cordenadas aqui)</span>
+                Editar Placa <span className="text-blue-600 font-bold">#{""}</span>
+                {index.x !== undefined && index.y !== undefined && (
+                    <span className="text-sm text-gray-500 ml-2">{gridRepresentation}</span>
                 )}
             </h2>
 
@@ -114,8 +130,8 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
             <div className="m-2 space-y-3 bg-black/5 p-4 overflow-hidden rounded-lg shadow-lg">
                 <label htmlFor="">Tamanho da Placa (milímetros)</label>
                 <section className="flex  *:rounded-lg">
-                    <NumberInput label="Altura mm" />
-                    <NumberInput label="Largura mm" />
+                    <NumberInput label="largura mm" value={width} onChange={(value) => setSize(prev => ({ ...prev, width: value }))} />
+                    <NumberInput label="altura mm" value={height} onChange={(value) => setSize(prev => ({ ...prev, height: value }))} />
                 </section>
 
             </div>
@@ -124,13 +140,14 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
 
 
             <div className="space-y-3">
-                <label htmlFor={`note-textarea-${index}-${corX}-${corY}`} className="block text-sm font-medium text-gray-700">
+                <label htmlFor={`note-textarea-${index}-${index.x}-${index.y}`} className="block text-sm font-medium text-gray-700">
                     Observações da Placa:
                 </label>
                 <textarea
-                    id={`note-textarea-${index}-${corX}-${corY}`} // Unique ID
+                    id={`note-textarea-${index}-${index.x}-${index.y}`} // Unique ID
                     ref={noteRef}
-                    value={""}
+                    value={segmenteNote}
+                    onChange={(e) => setSegmentNote(e.target.value)} // Update state on change
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm text-sm"
                     rows={4}
                     placeholder="Adicione notas importantes..." />
@@ -143,30 +160,35 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
         </div>
     </div>;
 
-    const [state, setState] = useState("")
+
 
     return (
         <>
             <div
-                className={` ${state || "bg-gray-700"}
+                className={` ${stateStyles[state]}
                     flex items-center justify-center
                     cursor-pointer transition-all shadow-sm
                     hover:shadow-lg active:scale-100
                     duration-1000
                     rounded-lg aspect-square relative group`}
                 onClick={openPopup}
+
+                style={{
+                    width: width && width > 500 ? `${width / 10}px` : "auto",
+                    height: height && height > 500 ? `${height / 10}px` : "auto",
+                }}
             >
 
                 <section className="flex flex-col items-center">
 
                     <span className="text-white font-bold drop-shadow-md select-none">
-                        {index}
+                        {gridRepresentation}
                     </span>
-                    <span className="text-black/60 font-semibold">Tamanho aquid</span>
+                    <span className="text-black/60 font-semibold text-nowrap">{width && height ? `${width}mm x ${height}mm` : "0x0"}</span>
                 </section>
                 <motion.div
 
-                    className="absolute top-1/2 translate-y-20 transform-gpu flex gap-2  z-50 ">
+                    className=" transform-gpu flex gap-2  z-50 ">
                     <motion.div
                         initial={{ opacity: 0, translateY: 0 }}
                         animate={{ opacity: 1, translateY: -20 }}
@@ -175,7 +197,12 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
                         whileTap={{ translateY: 0 }}
                     >
 
-                        <CheckIcon className="text-white w-8 h-8 " onMouseEnter={() => setState("bg-green-500")} onMouseLeave={() => setState("")} />
+                        <CheckIcon className="text-green-500 w-8 h-8 border"
+                            onClick={(e) => {
+                                e.stopPropagation(); // 
+                                setState("finished")
+                            }}
+                        />
                     </motion.div>
                     <motion.div
                         initial={{ opacity: 0, translateY: 0 }}
@@ -184,7 +211,12 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
                         whileHover={{ rotateZ: 2, scale: 1.4 }}
                         whileTap={{ translateY: 0 }}>
 
-                        <XMarkIcon className="text-white w-8 h-8" onMouseEnter={() => setState("bg-red-400")} onMouseLeave={() => setState("")} />
+                        <XMarkIcon className="text-red-500 w-8 h-8"
+                            onClick={(e) => {
+                                e.stopPropagation(); //
+                                setState("error")
+                            }}
+                        />
                     </motion.div>
                 </motion.div>
 
@@ -199,4 +231,6 @@ function Segment({ index, corX, corY, allowEdit }: SegmentProps) {
     );
 }
 
-export default React.memo(Segment);
+export default Segment;
+export type { SegmentState };
+export { VALID_STATES, DEFAULT_STATE, stateStyles };
