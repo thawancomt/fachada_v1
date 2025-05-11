@@ -4,17 +4,24 @@ import NumberInput from "../NumberInput";
 import GridManager from "../GridManager";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
+import { useDebouncedCallback } from "use-debounce";
+
 import { dbManager } from "../utils/dbManager";
+import { createPortal } from "react-dom";
 
 function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
     const [rows, setRow] = React.useState<number>(0)
     const [cols, setCol] = React.useState<number>(0)
 
+    useDebouncedCallback((value: number) => {
+        console.log("Rows: ", value);
+
+    }, 900)
+
     const [indexX, setInverseX] = React.useState<boolean>(false)
     const [indexY, setInverseY] = React.useState<boolean>(false)
     const [onlyNumbersIndex, setOnlyNumbersIndex] = React.useState<boolean>(false)
 
-    const [previewZoom, setPreviewZoom] = React.useState<number>(1)
     const [facadeName, setFacadeName] = React.useState<string>("")
 
     const exportOptions = () => {
@@ -51,17 +58,22 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
     }
 
 
-    return (
+    return createPortal(
         <AnimatePresence mode="wait">
+            <div className="fixed inset-0 w-full  h-screen  backdrop-blur-3xl bg-black/50" > {/* Dark overlay */}
+
+            </div>
             <motion.div
-                key={"newFacadeSettingsPopUp"} // Unique key for the component
+                key={"newFacadeSettingsPopUp"}
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -30, scale: 0.95, zIndex: 0 }}
                 transition={{ damping: 200, stiffness: 100, duration: 0.5, delay: 0.1 }} // Adjusted transition for smoother animation
-                className="bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl relative flex flex-col gap-6 my-8" // Added background, better shadow, padding, max-width, consistent gap
+                className="fixed top-1/2 left-1/2 bg-white p-6 z-50 rounded-2xl transform -translate-x-1/2 -translate-y-1/2 w-11/12 sm:w-6/12 h-11/12 overflow-auto flex flex-col gap-4 shadow-lg"
             >
-                {/* Close Button */}
+
+
+
                 <button
                     onClick={onClose}
                     className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" // Softer close button style
@@ -72,7 +84,7 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
                     </svg>
                 </button>
 
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Nova Fachada: Configurações Iniciais</h2> {/* Clearer Title */}
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">Nova Fachada: {facadeName}</h2> {/* Clearer Title */}
 
                 {/* Facade Name Section */}
                 <motion.div layout className="w-full space-y-1"> {/* Added space-y for consistency */}
@@ -93,8 +105,8 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
 
                     {/* Rows and Columns Inputs */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Responsive grid layout */}
-                        <NumberInput label={"Placas Horizontais (Linhas)"} value={rows} onChange={setRow}></NumberInput>
-                        <NumberInput label={"Placas Verticais (Colunas)"} value={cols} onChange={setCol}></NumberInput>
+                        <NumberInput label={"Placas Horizontais (Linhas)"} value={rows} onChange={setRow} max={50}></NumberInput>
+                        <NumberInput label={"Placas Verticais (Colunas)"} value={cols} onChange={setCol} max={50}></NumberInput>
                     </div>
 
                     {/* Indexing Options */}
@@ -121,14 +133,14 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
                 {/* Preview Section */}
                 <motion.div
                     layout
-                    className="border border-gray-200 rounded-lg w-full overflow-hidden p-4 flex flex-col gap-4"
+                    className="border border-gray-200 rounded-lg w-full p-4 flex flex-col gap-4"
                 >
                     <div className="flex items-center justify-between gap-4 pb-2 border-b"> {/* Added bottom border */}
                         <h3 className="text-lg font-medium text-gray-900">Preview da Grade</h3>
 
                     </div>
 
-                    <div className="relative w-full h-80 bg-gray-100 rounded-md border border-gray-300 overflow-hidden p-4"> {/* <<< ADICIONADO PADDING AQUI (p-4) */}
+                    <div className="relative w-full h-80 bg-gray-100 rounded-md border overflow-hidden border-gray-300  p-4"> 
                         {(rows > 0 && cols > 0) ?
                             <TransformWrapper
                                 initialScale={0.5} // Ajuste conforme necessário
@@ -173,7 +185,7 @@ function NewFacadeSettingsPopUp({ onClose }: { onClose: () => void }) {
                 </div>
             </motion.div>
         </AnimatePresence>
-    )
+    , document.body)
 }
 
 export default NewFacadeSettingsPopUp;

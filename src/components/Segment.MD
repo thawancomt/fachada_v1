@@ -11,9 +11,10 @@ apply an modification on the entire line, or something like that.
 So the core functionalities of this component is:
     Receive the "Fachada" name of this component belongs to.
     receive the respective cordinates like, X and Y.
-    Receive an DBmanager that work like an ORM.
+    receive a grid representation cord like 1,1 or A,1
+    Must have access to the dbManager to handle call operations.
     The operations that DBmanager need to supply is:
-        - Set Weight and Height of the segment
+        - Set width and Height of the segment
         - Set status
         - Set note
         - Set setting for all Axis X or Y

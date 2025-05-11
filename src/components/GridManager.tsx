@@ -18,6 +18,17 @@ interface GridManagerProps {
 }
 
 function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, onlyNumbersIndex, allowEdit, facadeName }: GridManagerProps) {
+    useEffect(() => {
+        initGrid();
+        console.log("Loaded facade: ", facadeName);
+    }, [facadeName]);
+
+
+    const [forceRender, setForceRender] = React.useState(0)
+
+    function reRenderGrid() {
+        setForceRender((prev) => prev + 1);
+    }
 
     if (rows <= 0 || columns <= 0) {
         console.error("Invalid grid dimensions. Rows and columns must be greater than 0.");
@@ -25,15 +36,10 @@ function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, 
     }
 
     function initGrid() {
-        const options = dbManager.getFacade(facadeName || "Bloco A Lado Norte");
-
+        const options = dbManager.getFacade(facadeName || "");
     }
 
-    useEffect(() => {
-        initGrid();
-        console.log("Loaded facade: ", facadeName);
-        
-    }, [facadeName]);
+
 
     function getIndex(x: number, y: number): { x: string | number; y: string | number } {
         let temporaryIndex = {
@@ -61,28 +67,39 @@ function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, 
             { x: `${numberToLetters(Number(temporaryIndex.x), true)}`, y: `${Number(temporaryIndex.y)}` };
     }
 
+    const Grid = () => {
+        return (
+            <>
+                {Array.from({ length: rows }, (_, rowIndex) => (
+                    Array.from({ length: columns }, (_, columnIndex) => (
+                        <Segment
+                            gridRepresentation={`${getIndex(rowIndex, columnIndex).x}` + " : " + getIndex(rowIndex, columnIndex).y}
+                            facadeName={facadeName || ""}
+                            key={`${rowIndex}-${columnIndex}`}
+                            index={{ x: rowIndex, y: columnIndex }}
+                            allowEdit={allowEdit}
+                            reRenderGridCallback={reRenderGrid}
+                        />
+                    ))
+                ))
+
+                }
+            </>
+        )
+    }
+
+
     return (
-        <div className="" style={
+        <div className="w-full overflow-auto p-4" style={
             {
                 display: "grid",
                 gridTemplateColumns: `repeat(${columns}, auto)`,
-                
                 gap: "2px",
             }
         }>
 
-
             {
-                Array.from({ length: rows }, (_, rowIndex) => (
-                    Array.from({ length: columns }, (_, columnIndex) => (
-                        <Segment
-                            gridRepresentation={`${getIndex(rowIndex, columnIndex).x}` + `${getIndex(rowIndex, columnIndex).y}`}
-                            facadeName={facadeName || ""}
-                            key={`${rowIndex}-${columnIndex}`}
-                            index={{ x: rowIndex, y: columnIndex }}
-                            allowEdit={allowEdit} />
-                    ))
-                ))
+                <Grid />
             }
         </div>
     )

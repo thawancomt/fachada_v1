@@ -19,7 +19,7 @@ class ORM {
     }
 
     // Read the full map of facades (or return empty object)
-    private getAllFacades(): Record<string, FacadeOptions> {
+    public getAllFacades(): Record<string, FacadeOptions> {
         const raw = window.localStorage.getItem("facades");
         if (!raw) return {};
 
@@ -39,6 +39,11 @@ class ORM {
 
     // Set or update a facade without losing the rest
     setNewFacade(options: FacadeOptions) {
+
+        if (!options.facadeName) {
+            console.error("Facade name is required");
+            return false;
+        }
 
         if (this.checkIfFacadeExists(options.facadeName)) {
             if (!window.confirm("Uma fachada com esse nome já existe. Deseja sobrescrever?")) {
@@ -239,6 +244,84 @@ class ORM {
         }
         
         return facade.area[segmentIndex.x][segmentIndex.y] || null;
+
+    }
+
+    exportFacadeAsJSON(facadeName: string): string | null {
+        const all = this.getAllFacades();
+        const facade = all[facadeName];
+
+        if (!facade) {
+            console.error("Facade does not exist: ", facadeName);
+            return null;
+        }
+
+        return JSON.stringify(facade, null, 2);
+    }
+
+    applyAreaToAllLine(facadeName: string, rowIndex: number, area: { width: number, height: number }) {
+
+        const all = this.getAllFacades();
+
+        const facade = all[facadeName];
+
+        if (!facade) {
+            console.error("Facade does not exist: ", facadeName);
+            return false;
+        }
+
+        if (!facade.area) {
+            facade.area = {};
+        }
+
+        if (!facade.area[rowIndex]) {
+            facade.area[rowIndex] = {};
+        }
+
+        for (let i = 0; i < facade.columns; i++) {
+            if (!facade.area[rowIndex][i]) {
+                facade.area[rowIndex][i] = { width: area.width, height: area.height };
+            } else {
+                facade.area[rowIndex][i].width = area.width;
+                facade.area[rowIndex][i].height = area.height;
+            }
+        }
+
+        this.updateFacade(facadeName, { area: facade.area });
+        return true;
+
+    }
+
+    applyAreaToAllColumn(facadeName: string, columnIndex: number, area: { width : number, height: number}) {
+
+        const all = this.getAllFacades();
+
+        const facade = all[facadeName];
+
+        if (!facade) {
+            console.error("Facade does not exist: ", facadeName);
+            return false;
+        }
+
+        if (!facade.area) {
+            facade.area = {};
+        }
+
+        for (let i = 0; i < facade.rows; i++) {
+            if (!facade.area[i]) {
+                facade.area[i] = {};
+            }
+            
+            if (!facade.area[i][columnIndex]) {
+                facade.area[i][columnIndex] = { width: area.width, height: area.height };
+            } else {
+                facade.area[i][columnIndex].width = area.width;
+                facade.area[i][columnIndex].height = area.height;
+            }
+        }
+
+        this.updateFacade(facadeName, { area: facade.area });
+        return true;
 
     }
 
