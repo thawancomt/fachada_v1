@@ -13,12 +13,9 @@ function StartFacade() {
     const [newFacadePopup, setNewFacadePopup] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<FacadeOptions | null>(null)
 
-    const [rows, setRows] = React.useState<number>(0);
-    const [columns, setColumns] = React.useState<number>(0);
-    const [reverseIndex, setReverseIndex] = React.useState<boolean>(false);
-    const [inverseY, setInverseY] = React.useState<boolean>(false);
-    const [inverseX, setInverseX] = React.useState<boolean>(false);
-    const [onlyNumbersIndex, setOnlyNumbersIndex] = React.useState<boolean>(false);
+    const [inverseY, setInverseY] = React.useState<boolean>(options?.inverseY || false);
+    const [inverseX, setInverseX] = React.useState<boolean>(options?.inverseX || false);
+    const [onlyNumbersIndex, setOnlyNumbersIndex] = React.useState<boolean>(options?.onlyNumbersIndex || false);
 
 
     const [fullScreenVIew, setFullScreenView] = React.useState<Boolean>(false);
@@ -26,8 +23,12 @@ function StartFacade() {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        setOptions({ ...options, rows, columns, reverseIndex, inverseY, inverseX, onlyNumbersIndex });
-    }, [rows, columns, reverseIndex, inverseY, inverseX, onlyNumbersIndex]);
+        if (options) {
+            setInverseY(options.inverseY || false);
+            setInverseX(options.inverseX || false);
+            setOnlyNumbersIndex(options.onlyNumbersIndex || false);
+        }
+    }, [options?.inverseX, options?.inverseY, options?.onlyNumbersIndex]);
 
 
     const handleClick = () => {
@@ -145,13 +146,13 @@ function StartFacade() {
     const FacadeFullScreenView = () => {
         return createPortal(
             <>
-                <div className='bg-black/70 backdrop-blur-2xl fixed inset-0 flex items-center justify-center'
+                <div className='bg-black/70 backdrop-blur-2xl fixed inset-0 flex items-center justify-center z-40'
                     onClick={() => {
-                        setFullScreenView(!fullScreenVIew);
+                        setFullScreenView(false);
                     }}>
-                </div>
-                <div className='fixed inset-0 top-1/2 -translate-y-1/2 left-0 flex justify-center items-center w-screen h-screen'>
-                    {facadeGridDisplay}
+                    <div className='flex items-center justify-center z-50 fixed inset-0 p-4 w-[calc(100vw-2rem)] h-[calc(100vh-2rem)]'>
+                        {facadeGridDisplay}
+                    </div>
                 </div>
             </>
             , document.body)
@@ -193,7 +194,6 @@ function StartFacade() {
                 </div>
 
                 <div className="space-y-3">
-                    <h1>Valor : {String(inverseY)}</h1>
                     <div className="flex items-center gap-2 text-gray-600">
                         <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -236,9 +236,10 @@ function StartFacade() {
                     </div>
                 </div>
                 <section className="space-y-3">
-                    <div className='flex items-center gap-2'>
+                    <div className='flex  flex-col items-center gap-2'>
                         <ArrowDownTrayIcon className='text-yellow-400 w-6 h-6' />
                         <h2>Salvar em arquivo</h2>
+                        <span className='text-sm'>Exportar essa fachada para um arquivo compartilhavel</span>
                     </div>
                     <button
                         onClick={() => {
@@ -253,7 +254,7 @@ function StartFacade() {
                                 URL.revokeObjectURL(url);
                             }
                         }}
-                        className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded"
+                        className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded w-full"
                     >
                         Baixar JSON
                     </button>
@@ -265,19 +266,33 @@ function StartFacade() {
     const facadeGridDisplay = <>
         {options && <>
 
-            <div className="border  border-gray-300 rounded-lg p-0.5  overflow-auto relative bg-gray-100 shadow-lg">
+            <div className="border w-full h-full border-gray-300 rounded-lg p-0.5  overflow-auto relative bg-gray-100 shadow-lg">
                 <h2 className="text-xl font-bold text-gray-800 mb-4 flex-shrink-0 text-center lg:text-left">
                     Visualizacao da fachadad: <span className="text-indigo-600">{options!.facadeName}</span>
                 </h2>
+                <section className='flex *:flex *:items-center *:gap-2 gap-2 *:bg-gray-300 *:p-1 *:rounded-lg *:font-medium ml-4'>
+                    <div>
+                        <div className='bg-red-500 w-4 h-4'></div>
+                        <span>Problema</span>
+                    </div>
+                    <div>
+                        <div className='bg-green-500 w-4 h-4'></div>
+                        <span>Finalizado</span>
+                    </div>
+                    <div>
+                        <div className='bg-yellow-500 w-4 h-4'></div>
+                        <span>Pendente</span>
+                    </div>
+                </section>
                 <GridManager
                     columns={options!.columns}
                     rows={options!.rows}
                     allowEdit={true}
                     facadeName={options!.facadeName}
 
-                    inverseY={options!.inverseY}
-                    inverseX={options!.inverseX}
-                    onlyNumbersIndex={options!.onlyNumbersIndex} />
+                    inverseY={inverseY}
+                    inverseX={inverseX}
+                    onlyNumbersIndex={onlyNumbersIndex} />
                 <div className='absolute top-2 right-2 bg-white rounded-full p-2 shadow-md'>
                     <ArrowsPointingOutIcon className="w-5 h-5 text-indigo-500" onClick={
                         () => {
