@@ -27,7 +27,7 @@ function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, 
     const [forceRender, setForceRender] = React.useState(0)
 
     function reRenderGrid() {
-        setForceRender((prev) => prev + 1);
+        setForceRender(forceRender + 1);
     }
 
     if (rows <= 0 || columns <= 0) {
@@ -42,29 +42,31 @@ function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, 
 
 
     function getIndex(x: number, y: number): { x: string | number; y: string | number } {
-        let temporaryIndex = {
-            x: "",
-            y: ""
-        };
+
+        let temp: Record<string, number> = {
+            x: x + 1,
+            y: y + 1
+        }
+
+        if (inverseY) {
+            temp = { x: columns - 1 - x, y: temp.y }
+        }
 
         if (inverseX) {
-            temporaryIndex.x = `${inverseX ? columns - x : x + 1}`;
-            temporaryIndex.y = `${inverseY ? rows - y : y + 1}`;
-        } else if (inverseY) {
-            temporaryIndex.y = `${inverseY ? rows - y : y + 1}`;
-            temporaryIndex.x = `${inverseX ? columns - x : x + 1}`;
-        } else {
-            temporaryIndex.y = `${y + 1}`;
-            temporaryIndex.x = `${x + 1}`;
+            temp = { x: temp.x, y: rows + 1 - y }
         }
 
         if (onlyNumbersIndex) {
-            return reverseIndex ? { x: `${temporaryIndex.y}`, y: `${temporaryIndex.x}` } :
-                { x: `${temporaryIndex.x}`, y: `${temporaryIndex.y}` };
+            temp = { x: temp.x, y: temp.y }
+        } else {
+            temp = { x: numberToLetters(temp.x - 1), y: temp.y } 
         }
 
-        return reverseIndex ? { x: `${Number(temporaryIndex.x)}`, y: `${numberToLetters(Number(temporaryIndex.y), true)}` } :
-            { x: `${numberToLetters(Number(temporaryIndex.x), true)}`, y: `${Number(temporaryIndex.y)}` };
+        if (reverseIndex && !onlyNumbersIndex) {
+            return { x: temp.y , y: temp.x }
+        }
+
+        return temp;
     }
 
     const Grid = () => {
@@ -90,7 +92,7 @@ function GridManager({ rows = 0, columns = 0, reverseIndex, inverseY, inverseX, 
 
 
     return (
-        <div className="w-full overflow-auto p-4" style={
+        <div className="w-full h-full overflow-auto p-4" style={
             {
                 display: "grid",
                 gridTemplateColumns: `repeat(${columns}, auto)`,
