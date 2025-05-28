@@ -4,6 +4,7 @@ import VALID_STATES from "./STATES/States";
 import { PopupData, usePopup } from "./context/PopupContext";
 import { useGridContext } from "./context/GridContext";
 import { getSegmentData, SegmentData, updateSegment } from "./ORM/DbOperations";
+import { useFacadeContext } from "./context/FacadeContext";
 
 interface SegmentProps {
   index: { x: number, y: number };
@@ -19,24 +20,39 @@ const stateStyles: Record<VALID_STATES, string> = {
 
 function Segment({ index, gridRepresentation }: SegmentProps) {
 
-  const { facadeId, facadeName } = useGridContext();
+  const { facadeId, facadeName, data: FacadeData } = useFacadeContext();
 
   const [segmentData, setSegmentData] = useState<SegmentData | null>(null);
 
   useEffect(() => {
     async function fetchSegmentData() {
-      if (facadeId) {
-        const data = await getSegmentData(facadeId, index);
-        if (data) {
-          setSegmentData(data);
-          setState(data.state);
-          setDimension(data.dimension);
-          setNote(data.note);
+
+      // Search on data in grid context
+
+      if (FacadeData[index.x] === undefined) {
+        return;
+      }
+
+      if (FacadeData[index.x] && facadeId && facadeName) {
+
+        if (FacadeData[index.x][index.y]) {
+          console.log("Setting segment data from FacadeData", FacadeData[index.x][index.y]);
+
+          setSegmentData({
+            facadeId: facadeId,
+            facadeName: facadeName,
+            index: index,
+            state: FacadeData[index.x][index.y].state || "approved",
+            dimension: FacadeData[index.x][index.y].dimension || { width: 100, height: 100 },
+            note: FacadeData[index.x][index.y].note || "",
+          });
         }
+      } else {
+        return;
       }
     }
     fetchSegmentData();
-  }, [facadeId, index]);
+  }, [facadeId, index, FacadeData]);
 
 
   const [state, setState] = useState<VALID_STATES>(segmentData?.state || "pending");
@@ -72,7 +88,10 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
   }, [index, state, dimension, setDimension, setState, setNote, openPopup]);
 
   useEffect(() => {
-    if (isOpen && currentData?.index.x === index.x && currentData?.index.y === index.y ) {
+
+    if (!isOpen) return;
+
+    if (isOpen && currentData?.index.x === index.x && currentData?.index.y === index.y) {
       const updatePayload: PopupData = {
         state: state,
         index: index,
@@ -101,21 +120,25 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
 
   }, [state, dimension, note])
 
-  useEffect(() => {
-    console.log("renderized segment", index, state, gridRepresentation);
 
-  }, [state, index, gridRepresentation]);
+  useEffect(() => {
+    if (segmentData) {
+      setState(segmentData.state);
+      setDimension(segmentData.dimension);
+      setNote(segmentData.note);
+    }
+  }, [segmentData]);
 
   return (
     <div
-      className={`w-32 h-32 ${stateStyles[state]} flex flex-col border m-2`}
+      className={`${stateStyles[state]} flex flex-col rounded items-center justify-center`}
+      style={{ width: dimension.width, height: dimension.height }}
       onClick={handleOpenPopup}
     >
-      <span>Fachada: {facadeName}</span>
-      <span>{gridRepresentation}</span>
-      <span>{state}</span>
-      <span>{`(${index.x}, ${index.y})`}</span>
-      <span>{`${dimension.width}x${dimension.height}`}</span>
+      <h2 className="font-rubik font-medium">{gridRepresentation}</h2>
+      <span>
+          {dimension.width}x{dimension.height || "100x100"}
+      </span>
     </div>
   );
 }

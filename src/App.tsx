@@ -9,6 +9,8 @@ import { CreateFacadePopup } from './CreateFacadePopup';
 import React from 'react';
 import { FacadeData, getAllFacades } from './ORM/DbOperations';
 import { FacadeListContainer } from './FacadeListContainer';
+import FacadeProvider from './context/FacadeContext';
+import FacadeListItem from './smallComponents/FacadeListItem';
 
 function App() {
 
@@ -27,25 +29,37 @@ function App() {
 
 
   return (
-    <GridProvider>
-      <button className="bg-blue-500 text-white p-2 rounded" onClick={() => setIsOpen(true)}>
-        Criar fachada
-      </button>
+    <FacadeProvider>
+      <GridProvider>
+        <CreateFacadePopup isOpen={isOpen} setIsOpen={setIsOpen}></CreateFacadePopup>
+        <PopupProvider>
 
-      <FacadeListContainer />
-      <CreateFacadePopup isOpen={isOpen} setIsOpen={setIsOpen}></CreateFacadePopup>
-      <PopupProvider>
-        <div className="w-full ">
+          <div className='w-screen h-screen bg-gray-200 grid grid-cols-1 md:grid-cols-2'>
+            <section>
+              <div className='bg-gray-100 p-4 m-2 rounded shadow-lg flex flex-col gap-2'>
+                <h1 className='text-blue-600 font-black text-2xl'>Gestao de fachadas</h1>
+                <span className='text-gray-600 font-semibold'>Crie, gerencie e visualize suas fachadas.</span>
+              </div>
+              <section>
 
-          <div className='bg-red-300'>
-            <GridManager />
+                <div>
+
+                  <FacadeListContainer />            
+                </div>
+
+              </section>
+            </section>
+            <section>
+
+              <GridManager/>
+            </section>
 
           </div>
-
           <PopUpComponent />
-        </div>
-      </PopupProvider>
-    </GridProvider>
+        </PopupProvider>
+      </GridProvider>
+    </FacadeProvider>
+
   )
 }
 

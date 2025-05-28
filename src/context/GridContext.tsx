@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
+import { SegmentCell } from "./FacadeContext";
 
 
 type GridOptions = {
-    facadeName?: string;
-    facadeId?: number;
     rows: number;
     columns: number;
     useLetter?: boolean;
@@ -11,6 +10,10 @@ type GridOptions = {
     reverseHorizontal?: boolean;
     prefix?: string;
     suffix?: string;
+
+    [row: number] : {
+        [column: number] : SegmentCell
+    }
 };
 
 type GridContextType = GridOptions & {
@@ -22,15 +25,13 @@ const GridContext = React.createContext<GridContextType | null>(null)
 
 function GridProvider({children} : { children: React.ReactNode }) {
     const [gridOptions, setGridOptions] = React.useState<GridOptions>({
-        facadeName: "",
-        facadeId: 0,
         rows: 0,
         columns: 0,
         useLetter: false,
         reverseVertical: false,
         reverseHorizontal: false,
         prefix: "",
-        suffix: ""
+        suffix: "",
     });
 
     return (
@@ -49,3 +50,4 @@ export function useGridContext() {
 }
 
 export { GridProvider };
+export type { GridOptions, GridContextType };

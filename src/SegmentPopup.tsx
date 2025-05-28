@@ -6,6 +6,7 @@ import { stateStyles } from "./Segment";
 import { useGridContext } from "./context/GridContext";
 import { updateSegment } from "./ORM/DbOperations";
 import { useEffect } from "react";
+import { useFacadeContext } from "./context/FacadeContext";
 
 interface SegmentPopupProps {
     index: { x: number, y: number };
@@ -18,7 +19,7 @@ interface SegmentPopupProps {
 
 
 function Card({ data }: { data: PopupData }) {
-    const { facadeName, facadeId } = useGridContext();
+    const { facadeName, facadeId } = useFacadeContext();
 
     
     function handleSave() {
@@ -55,7 +56,7 @@ function Card({ data }: { data: PopupData }) {
                     </div>
 
                     <section>
-                        <h2>Status</h2>
+                        <h2>Status: {data.state}</h2>
 
                         {
                             Array.from({ length: VALID_STATES_OBJECT.length }).map((_, index) => {

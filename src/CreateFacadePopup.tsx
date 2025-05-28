@@ -27,6 +27,7 @@ export function CreateFacadePopup({isOpen, setIsOpen}: {isOpen: boolean | undefi
                 },
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                id: 0
             }
         )
     }

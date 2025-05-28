@@ -1,11 +1,11 @@
 import { openDB } from 'idb';
-import { GridProps } from '../GridManager';
 import VALID_STATES, { VALID_STATES_OBJECT } from '../STATES/States';
+import { GridOptions } from '../context/GridContext';
 
 export type FacadeData = {
-    id?: number;
+    id: number;
     name: string;
-    grid: GridProps;
+    grid: GridOptions;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -66,7 +66,7 @@ export async function updateSegment(params: SegmentData): Promise<void | null> {
     const db = await dbPromisse;
     const facade = await db.get('facades', params.facadeId);
 
-    console.log("Updating segment with params:", params);
+    console.log(`Updating segment ${params.index} with params`, params);
     
 
     if (!params.state) return null;
@@ -83,6 +83,10 @@ export async function updateSegment(params: SegmentData): Promise<void | null> {
 
 export async function getSegmentData(facadeId: number, index: { x: number; y: number }): Promise<SegmentData | null> {
     const db = await dbPromisse;
+
+    console.log(`Fetching segment data for facadeId: ${facadeId}, index: ${JSON.stringify(index)}`);
+    
+
     const facade = await db.get('facades', facadeId);
 
     if (!facade || !facade.grid || !facade.grid[index.x] || !facade.grid[index.x][index.y]) {

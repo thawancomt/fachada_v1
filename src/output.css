@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss";
 
 @utility example {
@@ -13,5 +14,7 @@
 }
 
 @theme {
-    --color-background: #242424
+    --color-background: #242424;
+    --font-nunito: "Nunito Sans", sans-serif;
+    --font-rubik: "Rubik", sans-serif;
 }
