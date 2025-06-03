@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { FacadeData, getAllFacades } from "./ORM/DbOperations";
-import { FacadeContextOptions, useFacadeContext } from "./context/FacadeContext";
+import { FacadeData } from "./ORM/DbOperations";
+import { useFacadeContext } from "./context/FacadeContext";
 import { useGridContext } from "./context/GridContext";
 import FacadeListItem from "./smallComponents/FacadeListItem";
 
@@ -10,7 +10,7 @@ export function FacadeListContainer() {
   const { loadFacadeList, setSideMenuOpen, facadeList } = useFacadeContext();
 
   async function handleLoadFacade() {
-    const facades = await loadFacadeList();
+    await loadFacadeList();
   }
 
   const { data: facadeData, setFacadeOptions, facadeName } = useFacadeContext();

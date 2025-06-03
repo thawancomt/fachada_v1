@@ -7,7 +7,7 @@ import { useFacadeContext } from './context/FacadeContext';
 
 function GridDisplay() {
     const { rows, columns, prefix, reverseVertical, reverseHorizontal, useLetter, suffix, gap } = useGridContext();
-    const { data, facadeName, setSideMenuOpen, sideMenuOpen, createNewFacadeMenu, setCreateNewFacadeMenu} = useFacadeContext();
+    const { data, facadeName, setSideMenuOpen, sideMenuOpen, setCreateNewFacadeMenu} = useFacadeContext();
     
 
     function getGridRepresentation(row: number, column: number) {
