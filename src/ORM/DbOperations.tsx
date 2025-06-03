@@ -1,9 +1,9 @@
 import { openDB } from 'idb';
-import VALID_STATES, { VALID_STATES_OBJECT } from '../STATES/States';
+import VALID_STATES from '../STATES/States';
 import { GridOptions } from '../context/GridContext';
 
 export type FacadeData = {
-    id: number;
+    id?: number;
     name: string;
     grid: GridOptions;
     createdAt: Date;
@@ -12,7 +12,7 @@ export type FacadeData = {
 
 export type SegmentData = {
     facadeName: string;
-    facadeId: number;
+    facadeId?: number;
 
     index: { x: number; y: number };
     state: VALID_STATES;
@@ -44,15 +44,43 @@ function ensureGridCellExists(facade: any, params: SegmentData) {
 
 export async function saveFacade(params: FacadeData) {
     const db = await dbPromisse;
+
+    if (!params.name || !params.grid) {
+        console.error("Invalid parameters for saveFacade:", params);
+        return;
+    }
+    
+
     await db.put('facades', params);
 }
 
-export async function getFacade(id: string): Promise<FacadeData | undefined> {
+export async function updateFacade(params : FacadeData): Promise<void> {
+    const db = await dbPromisse;
+
+    if (!params.id) return;
+    const existingFacade = await db.get('facades', params.id);
+
+    if (!existingFacade) {
+        console.error(`Facade with id ${params.id} not found.`);
+        return;
+    }
+    const updatedFacade: FacadeData = {
+        ...existingFacade,
+        name: params.name,
+        grid: params.grid,
+        updatedAt: new Date()
+    };
+
+    await db.put('facades', updatedFacade);
+    console.log(`Facade ${params.name} updated successfully.`);
+}
+
+export async function getFacade(id: number): Promise<FacadeData | undefined> {
     const db = await dbPromisse;
     return db.get('facades', id);
 }
 
-export async function getAllFacades() {
+export async function getAllFacades() : Promise<FacadeData[]> {
     const db = await dbPromisse;
     return db.getAll('facades');
 }
@@ -64,6 +92,10 @@ export async function deleteFacade(id: string): Promise<void> {
 
 export async function updateSegment(params: SegmentData): Promise<void | null> {
     const db = await dbPromisse;
+    if (params.facadeId === undefined ) {
+        console.error("Invalid parameters for updateSegment:", params);
+        return null;
+    }
     const facade = await db.get('facades', params.facadeId);
 
     console.log(`Updating segment ${params.index} with params`, params);

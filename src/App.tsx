@@ -1,16 +1,15 @@
-
 import './output.css'
 import SegmentPopup from './SegmentPopup';
 import ReactDOM from 'react-dom';
 import GridManager from './GridManager';
 import { PopupProvider } from './context/PopupContext';
-import { GridProvider, useGridContext } from './context/GridContext';
+import { GridProvider } from './context/GridContext';
 import { CreateFacadePopup } from './CreateFacadePopup';
 import React from 'react';
-import { FacadeData, getAllFacades } from './ORM/DbOperations';
 import { FacadeListContainer } from './FacadeListContainer';
 import FacadeProvider from './context/FacadeContext';
-import FacadeListItem from './smallComponents/FacadeListItem';
+import FacadeVisualizerCard from './smallComponents/FacadeVisualizerCard';
+import SideMenu from './SideMenu';
 
 function App() {
 
@@ -25,41 +24,40 @@ function App() {
     )
   }
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  // State for the "Create New Facade" popup
+  const [isCreateFacadePopupOpen, setIsCreateFacadePopupOpen] = React.useState(false);
+  // State for sidebar visibility, defaulting to true (open)
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
 
 
   return (
     <FacadeProvider>
       <GridProvider>
-        <CreateFacadePopup isOpen={isOpen} setIsOpen={setIsOpen}></CreateFacadePopup>
+        {/* Popups are rendered at the top level, CreateFacadePopup is modal */}
+        
+        
         <PopupProvider>
-
-          <div className='w-screen h-screen bg-gray-200 grid grid-cols-1 md:grid-cols-2'>
-            <section>
-              <div className='bg-gray-100 p-4 m-2 rounded shadow-lg flex flex-col gap-2'>
-                <h1 className='text-blue-600 font-black text-2xl'>Gestao de fachadas</h1>
-                <span className='text-gray-600 font-semibold'>Crie, gerencie e visualize suas fachadas.</span>
-              </div>
-              <section>
-
-                <div>
-
-                  <FacadeListContainer />            
-                </div>
-
-              </section>
-            </section>
-            <section>
-
-              <GridManager/>
-            </section>
-
-          </div>
+          {/* SegmentPopup is also modal-like, managed by its provider and rendered via portal */}
           <PopUpComponent />
+
+          {/* Main application layout: flex container for sidebar and main content */}
+          <div className="flex h-screen bg-slate-100 text-gray-800">
+            
+            <SideMenu />
+            <CreateFacadePopup  />
+
+            {/* Main Content Area */}
+            <main className="flex-grow h-screen overflow-y-auto p-4 md:p-6">
+              
+              
+              <div className={!isSidebarOpen ? "pt-12 md:pt-0" : ""}>
+                 <GridManager />
+              </div>
+            </main>
+          </div>
         </PopupProvider>
       </GridProvider>
     </FacadeProvider>
-
   )
 }
 

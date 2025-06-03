@@ -1,20 +1,14 @@
-
-import Segment from './Segment'
+import React from 'react';
+import Segment from './Segment';
 import { useGridContext } from './context/GridContext';
+import FirstCell from './smallComponents/FirstCell';
 import { useFacadeContext } from './context/FacadeContext';
 
 
 function GridDisplay() {
-
-    const { rows, columns, prefix, reverseVertical, reverseHorizontal, useLetter, suffix } = useGridContext();
+    const { rows, columns, prefix, reverseVertical, reverseHorizontal, useLetter, suffix, gap } = useGridContext();
+    const { data, facadeName, setSideMenuOpen, sideMenuOpen, createNewFacadeMenu, setCreateNewFacadeMenu} = useFacadeContext();
     
-
-
-    function getIndex(index: number, columns: number) {
-        const row = Math.floor(index / columns);
-        const column = index % columns;
-        return { row, column };
-    }
 
     function getGridRepresentation(row: number, column: number) {
 
@@ -39,26 +33,96 @@ function GridDisplay() {
         return `${rowIndex}-${columnIndex}`;
     }
 
+    function getRowDimension(row: number) {
+        let totalSize = 0;
+        for (let i = 0; i < columns; i++) {
+            if (data[row] && data[row][i]) {
+                totalSize += data[row][i].dimension?.width || 100; 
+            } else {
+                totalSize += 100; 
+            }
+        }
+        return totalSize;
+    }
+
+    function getColumnDimension(column: number) {
+        let totalHeight = 0;
+        for (let i = 0; i < rows; i++) {
+            if (data[i] && data[i][column]) {
+                totalHeight += data[i][column].dimension?.height || 100;
+            } else {
+                totalHeight += 100;
+            }
+        }
+        return {
+            height: totalHeight
+        };
+    }
+
+
+    
+    
+
+
     return (
         <div
-            className='w-full overflow-scroll'
+            className='overflow-auto'
             // use style to create a Grid
             style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(${columns}, auto)`,
-                gap: "1px"
+                gridTemplateColumns: `repeat(${columns + 1}, auto)`,
+                gap: `${gap}px`
             }}>
-            {Array.from({ length: rows * columns }).map((_, index) => {
-                const { row, column } = getIndex(index, columns);
 
+            {/* Top-left FirstCell (header) */}
+            {
+                facadeName && <FirstCell  />
+            }
+
+            {/* Render first row (column headers) */}
+            {Array.from({ length: columns }).map((_, colIdx) => {
+
+                const { height } = getColumnDimension(colIdx);
                 return (
-                    <Segment
-                        gridRepresentation={getGridRepresentation(row, column)}
-                        index={{ x: row, y: column }}
-                    />
-                )
+                <FirstCell key={`col-header-${colIdx}`} data={`Altura total: ${height}`} />
+            )
             })}
 
+
+            {/* Render grid rows */}
+            {Array.from({ length: rows }).map((_, rowIdx) => (
+                <React.Fragment key={`row-${rowIdx}`}>
+                    {/* First cell of the row (row header) */}
+                    <FirstCell data={`Largura total ${getRowDimension(rowIdx)}`} />
+                    {/* The rest of the row */}
+                    {Array.from({ length: columns }).map((_, colIdx) => (
+                        <Segment
+                            key={`${rowIdx}-${colIdx}-cell`}
+                            gridRepresentation={getGridRepresentation(rowIdx, colIdx)}
+                            index={{ x: rowIdx, y: colIdx }}
+                        />
+                    ))}
+                </React.Fragment>
+            ))}
+
+            {
+                rows === 0 && columns === 0 && (
+                    <div className="col-span-full text-center text-gray-500 p-4 flex  flex-col justify-center items-center h-screen">
+                        <p>Abra ou crie uma fachada para começar.</p>
+                        <br />
+                        <button className='bg-blue-500 text-white py-2 px-4 rounded'
+                        onClick={() => {
+                            if (sideMenuOpen) {
+                                setCreateNewFacadeMenu(true);
+                            } else {
+                                setSideMenuOpen(true);
+                            }
+                        }
+                    }
+                         >{sideMenuOpen ? "Criar nova fachada" : "Abrir menu"}</button>
+                    </div>
+                )
+            }
         </div>
     )
 
