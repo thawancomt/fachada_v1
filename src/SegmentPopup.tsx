@@ -1,10 +1,10 @@
-
 import VALID_STATES from "./STATES/States";
 import { VALID_STATES_OBJECT } from "./STATES/States";
 import { PopupData, usePopup } from "./context/PopupContext";
 import { stateStyles } from "./Segment";
 import { useGridContext } from "./context/GridContext";
 import { useFacadeContext } from "./context/FacadeContext";
+import { useEffect, useState } from "react";
 
 interface SegmentPopupProps {
     index: { x: number, y: number };
@@ -21,6 +21,15 @@ function Card({ data }: { data: PopupData }) {
     const { closePopup } = usePopup();
     const {applyOnXaxis, applyOnYaxis} = useGridContext();
 
+    const [wasEdited, setWasEdited] = useState(false);
+    const [originalData, setOriginalData] = useState<PopupData >(data);
+
+    useEffect(() => {
+        if (data != originalData) {
+            setWasEdited(true);
+        }
+        
+    }, [data]);
 
 
     function handleSave() {
@@ -32,7 +41,8 @@ function Card({ data }: { data: PopupData }) {
                 index: data.index,
                 state: data.state,
                 dimension: data.dimension,
-                note: data.note
+                note: data.note,
+                isWindows: data.isWindows,
             });
 
             closePopup();
@@ -44,11 +54,41 @@ function Card({ data }: { data: PopupData }) {
     }
 
 
+    function restoreOriginalData() {
+        if (wasEdited) {
+            if (data.setState) data.setState(originalData.state);
+            if (data.setDimension) data.setDimension({ ...originalData.dimension });
+            if (data.setNote) data.setNote(originalData.note);
+            if (data.setIsWindows) data.setIsWindows(originalData.isWindows);
+            setWasEdited(false);
+            updateSegmentDataInContext({
+                facadeName: facadeName,
+                facadeId: facadeId,
+                index: originalData.index,
+                state: originalData.state,
+                dimension: originalData.dimension,
+                note: originalData.note,
+                isWindows: originalData.isWindows,
+            })
+        } else {
+            console.error("Nenhum dado original para restaurar.");
+        }
+    }
 
     return (
     <div 
       className="w-screen h-screen fixed top-0 bg-black/70 overflow-hidden  flex items-center justify-center z-50"
-      onClick={closePopup}
+      onClick={ () => {
+        if (wasEdited) {
+          const confirmClose = window.confirm("Você tem alterações não salvas. Salve-as antes de fechar.");
+          if (confirmClose) {
+            restoreOriginalData();
+            closePopup();
+          }
+        } else {
+          closePopup();
+        }
+      }}
     >
       <div 
         className="bg-white p-2  rounded-lg border m-2 w-fit h-fit overflow-hidden"
@@ -81,7 +121,7 @@ function Card({ data }: { data: PopupData }) {
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Largura (cm)
+                Largura (mm)
               </label>
               <input
                 type="number"
@@ -96,7 +136,7 @@ function Card({ data }: { data: PopupData }) {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Altura (cm)
+                Altura (mm)
               </label>
               <input
                 type="number"
@@ -177,7 +217,12 @@ function Card({ data }: { data: PopupData }) {
           </div>
         </div>
 
-        <div className="bg-gray-50 px-6 py-4 flex justify-end">
+        <div className="bg-gray-50 px-6 py-4 flex justify-evenly">
+          <button className="px-5 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium"
+          onClick={() => {
+            data.setIsWindows(!data.isWindows);
+          }}
+          >{data.isWindows ? "Desmarcar como Janela" : "Marcar como Janela"}</button>
           <button
             className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             onClick={handleSave}

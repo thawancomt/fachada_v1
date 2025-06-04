@@ -12,6 +12,7 @@ type GridOptions = {
     gap?: number;
     prefix?: string;
     suffix?: string;
+    isWindows?: boolean;
 
     [row: number]: {
         [column: number]: SegmentCell

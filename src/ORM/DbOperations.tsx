@@ -18,8 +18,9 @@ export type SegmentData = {
     state: VALID_STATES;
     dimension: { width: number; height: number };
     note: string;
+    isWindows: boolean;
 
-}
+};
 
 
 
@@ -108,6 +109,7 @@ export async function updateSegment(params: SegmentData): Promise<void | null> {
     if (params.state) facade.grid[params.index.x][params.index.y].state = params.state;
     if (params.dimension) facade.grid[params.index.x][params.index.y].dimension = params.dimension;
     if (params.note) facade.grid[params.index.x][params.index.y].note = params.note;
+    if (params.isWindows !== undefined) facade.grid[params.index.x][params.index.y].isWindows = params.isWindows;
 
     await db.put('facades', facade);
 
@@ -133,7 +135,8 @@ export async function getSegmentData(facadeId: number, index: { x: number; y: nu
         index: index,
         state: segment.state,
         dimension: segment.dimension,
-        note: segment.note
+        note: segment.note,
+        isWindows: segment.isWindows
     };
 }
 

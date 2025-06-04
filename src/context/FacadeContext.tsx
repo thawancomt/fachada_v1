@@ -6,6 +6,7 @@ type SegmentCell = {
     state?: VALID_STATES,
     dimension?: { width: number, height: number },
     note?: string,
+    isWindows?: boolean,
 }
 
 type FacadeContextOptions = {
@@ -71,7 +72,8 @@ export default function FacadeProvider({ children }: { children: React.ReactNode
                 [data.index.y]: {
                     dimension: data.dimension,
                     state: data.state,
-                    note: data.note
+                    note: data.note,
+                    isWindows: data.isWindows
                 }
             }
             return {

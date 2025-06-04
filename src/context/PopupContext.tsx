@@ -6,6 +6,8 @@ type PopupData = {
     index: { x: number, y: number };
     dimension: { width: number, height: number };
     note: string;
+    isWindows: boolean;
+    setIsWindows: React.Dispatch<React.SetStateAction<boolean>>;
     setNote: React.Dispatch<React.SetStateAction<string>>;
     setDimension: React.Dispatch<React.SetStateAction<{ width: number, height: number }>>;
     setState: React.Dispatch<React.SetStateAction<VALID_STATES>>;
