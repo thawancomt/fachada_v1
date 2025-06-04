@@ -135,7 +135,7 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
         </div>
 
         <div className="mt-3 w-full space-y-1">
-          {dimension.width > 0 && dimension.height > 0 && (
+          {(dimension.width > 0 || dimension.height > 0) && (
             <div className="flex items-center text-sm text-gray-600">
               <span className="font-medium mr-1">Dimensões:</span>
               {dimension.width} x {dimension.height}
@@ -151,7 +151,7 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
           )}
         </div>
 
-        <div className="mt-auto w-full pt-2 text-xs text-gray-500">
+        <div className="mt-auto w-full pt-2  text-xs text-gray-500">
           <div className="flex justify-between border-t border-gray-100 pt-2">
             <span className="truncate max-w-[60%]">{facadeName}</span>
             <span>({index.x}, {index.y})</span>
@@ -159,7 +159,7 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
         </div>
       </> : (
         // Representação de janela
-        <div className="w-full h-full flex items-center justify-center">
+        <div className="w-full h-full   flex items-center justify-center">
           <div className="bg-blue-100 border-2 border-dashed border-blue-400 rounded-lg w-[100%] h-[100%] flex items-center justify-center">
             <span className="text-blue-800 font-bold text-lg">Janela</span>
           </div>

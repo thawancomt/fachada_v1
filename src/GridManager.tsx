@@ -37,6 +37,11 @@ function GridDisplay() {
         let totalSize = 0;
         for (let i = 0; i < columns; i++) {
             if (data[row] && data[row][i]) {
+
+                if (data[row][i].isWindows) {
+                    continue;
+                }
+
                 totalSize += data[row][i].dimension?.width || 100; 
             } else {
                 totalSize += 100; 
@@ -49,6 +54,9 @@ function GridDisplay() {
         let totalHeight = 0;
         for (let i = 0; i < rows; i++) {
             if (data[i] && data[i][column]) {
+                if (data[i][column].isWindows) {
+                    continue;
+                }
                 totalHeight += data[i][column].dimension?.height || 100;
             } else {
                 totalHeight += 100;
