@@ -22,7 +22,7 @@ function Card({ data }: { data: PopupData }) {
     const {applyOnXaxis, applyOnYaxis} = useGridContext();
 
     const [wasEdited, setWasEdited] = useState(false);
-    const [originalData, setOriginalData] = useState<PopupData >(data);
+    const [originalData ] = useState<PopupData >(data);
 
     useEffect(() => {
         if (data != originalData) {

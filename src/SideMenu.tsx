@@ -4,7 +4,7 @@ import FacadeVisualizerCard from "./smallComponents/FacadeVisualizerCard";
 
 export default function SideMenu() {
 
-    const { sideMenuOpen, setSideMenuOpen, createNewFacadeMenu, setCreateNewFacadeMenu } = useFacadeContext();
+    const { sideMenuOpen, setSideMenuOpen,  setCreateNewFacadeMenu } = useFacadeContext();
 
     return (
         <>

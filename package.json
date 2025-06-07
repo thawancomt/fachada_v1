@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@tailwindcss/cli": "^4.1.8",
     "@tailwindcss/vite": "^4.1.8",
     "gh-pages": "^6.3.0",
     "idb": "^8.0.3",

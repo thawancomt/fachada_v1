@@ -1,11 +1,10 @@
-import './output.css';
+import './styles.css';
 import SegmentPopup from './SegmentPopup';
 import ReactDOM from 'react-dom';
 import GridManager from './GridManager';
 import { PopupProvider } from './context/PopupContext';
 import { GridProvider } from './context/GridContext';
 import { CreateFacadePopup } from './CreateFacadePopup';
-import React from 'react';
 import FacadeProvider from './context/FacadeContext';
 import SideMenu from './SideMenu';
 
@@ -34,7 +33,7 @@ function App() {
             <SideMenu />
             <CreateFacadePopup />
 
-            <main className="flex-grow h-screen overflow-y-auto p-4 md:p-6">
+            <main className="flex-grow h-screen overflow-y-auto p-4 md:p-6 ">
 
                 <GridManager />
             </main>

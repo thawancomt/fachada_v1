@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect } from "react";
+import React, { createContext, useCallback } from "react";
 import VALID_STATES from "../STATES/States";
 import { updateSegment, SegmentData, getAllFacades, FacadeData } from "../ORM/DbOperations";
 

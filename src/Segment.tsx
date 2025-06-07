@@ -4,8 +4,6 @@ import VALID_STATES from "./STATES/States";
 import { PopupData, usePopup } from "./context/PopupContext";
 import { useFacadeContext } from "./context/FacadeContext";
 
-import windowsSvg from "./svgs/window.svg";
-
 interface SegmentProps {
   index: { x: number, y: number };
   gridRepresentation: string;
@@ -107,21 +105,21 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
           detailsRef.current.style.left = `${e.clientX + 10}px`;
           detailsRef.current.style.top = `${e.clientY + 10}px`;
         }
-      }}
+      }} 
 
       style={{
         width: dimension.width > 0 ? `${dimension.width / 5}px` : 'auto',
         height: dimension.height > 0 ? `${dimension.height / 5}px` : 'auto',
-      }}
+      }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     >
       {
-        showDetails && <div className="absolute p-4 bg-blue-50 rounded-2xl max-w-80" ref={detailsRef}>
+        showDetails && <div className="absolute p-4   bg-blue-50 rounded-2xl max-w-80" ref={detailsRef}>
           <span className="text-xs text-gray-500">
             Altura: {dimension.height > 0 ? `${dimension.height}mm` : 'N/A'}<br />
             Largura: {dimension.width > 0 ? `${dimension.width}mm` : 'N/A'}
           </span>
           <div className="text-wrap truncate">
-            <span className="text-xs text-gray-500 text-wrap truncate w-full">notas: {note ? note : 'N/A'}</span>
+            <span className="text-xs text-gray-500  text-wrap truncate w-full">notas: {note ? note : 'N/A'}</span>
           </div>
         </div>
       }
@@ -159,7 +157,7 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
         </div>
       </> : (
         // Representação de janela
-        <div className="w-full h-full   flex items-center justify-center">
+        <div className="w-full h-full  flex items-center justify-center">
           <div className="bg-blue-100 border-2 border-dashed border-blue-400 rounded-lg w-[100%] h-[100%] flex items-center justify-center">
             <span className="text-blue-800 font-bold text-lg">Janela</span>
           </div>

@@ -1,0 +1,10 @@
+{
+  "tailwindCSS.experimental.configFile": "src/output.css",
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "typescript": "typescript",
+    "html": "html",
+    "jsx": "javascriptreact",
+    "tsx": "typescriptreact"
+  }
+}
