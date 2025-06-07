@@ -7,8 +7,8 @@ import { useFacadeContext } from './context/FacadeContext';
 
 function GridDisplay() {
     const { rows, columns, prefix, reverseVertical, reverseHorizontal, useLetter, suffix, gap } = useGridContext();
-    const { data, facadeName, setSideMenuOpen, sideMenuOpen, setCreateNewFacadeMenu} = useFacadeContext();
-    
+    const { data, facadeName, setSideMenuOpen, sideMenuOpen, setCreateNewFacadeMenu } = useFacadeContext();
+
 
     function getGridRepresentation(row: number, column: number) {
 
@@ -42,9 +42,9 @@ function GridDisplay() {
                     continue;
                 }
 
-                totalSize += data[row][i].dimension?.width || 100; 
+                totalSize += data[row][i].dimension?.width || 100;
             } else {
-                totalSize += 100; 
+                totalSize += 100;
             }
         }
         return totalSize;
@@ -68,8 +68,14 @@ function GridDisplay() {
     }
 
 
-    
-    
+    function getMinColumnWidth(col: number): number {
+        // This function ensures we get the minimum width for a column
+        // based on the minimum segment width on a Column
+        return 100;
+    }
+
+
+
 
 
     return (
@@ -84,7 +90,7 @@ function GridDisplay() {
 
             {/* Top-left FirstCell (header) */}
             {
-                facadeName && <FirstCell  />
+                facadeName && <FirstCell />
             }
 
             {/* Render first row (column headers) */}
@@ -92,8 +98,8 @@ function GridDisplay() {
 
                 const { height } = getColumnDimension(colIdx);
                 return (
-                <FirstCell key={`col-header-${colIdx}`} data={`Altura total: ${height}`} />
-            )
+                    <FirstCell key={`col-header-${colIdx}`} data={`Altura total: ${height}`} />
+                )
             })}
 
 
@@ -119,15 +125,15 @@ function GridDisplay() {
                         <p>Abra ou crie uma fachada para começar.</p>
                         <br />
                         <button className='bg-blue-500 text-white py-2 px-4 rounded'
-                        onClick={() => {
-                            if (sideMenuOpen) {
-                                setCreateNewFacadeMenu(true);
-                            } else {
-                                setSideMenuOpen(true);
+                            onClick={() => {
+                                if (sideMenuOpen) {
+                                    setCreateNewFacadeMenu(true);
+                                } else {
+                                    setSideMenuOpen(true);
+                                }
                             }
-                        }
-                    }
-                         >{sideMenuOpen ? "Criar nova fachada" : "Abrir menu"}</button>
+                            }
+                        >{sideMenuOpen ? "Criar nova fachada" : "Abrir menu"}</button>
                     </div>
                 )
             }

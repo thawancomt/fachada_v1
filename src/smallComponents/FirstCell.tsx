@@ -3,10 +3,11 @@ import React from "react";
 type FirstCellProps = {
   index?: { x: number, y: number }
   data?: any
+  style?: React.CSSProperties;
 
 }
 
-export default function FirstCell({ data }: FirstCellProps) {
+export default function FirstCell({ data, style }: FirstCellProps) {
 
 
   const popupDiv = React.useRef<HTMLDivElement>(null);
@@ -15,6 +16,7 @@ export default function FirstCell({ data }: FirstCellProps) {
 
   return (
     <div className="flex items-center justify-center rounded-xl border border-gray-300 bg-gray-600 p-4 shadow-sm transition-all h-full"
+      style={style}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={(e) => {
