@@ -1,5 +1,5 @@
 import React from 'react';
-import Segment from './Segment';
+import Segment, {MIN_SEGMENT_DIMENSION} from './Segment';
 import { useGridContext } from './context/GridContext';
 import FirstCell from './smallComponents/FirstCell';
 import { useFacadeContext } from './context/FacadeContext';
@@ -71,7 +71,24 @@ function GridDisplay() {
     function getMinColumnWidth(col: number): number {
         // This function ensures we get the minimum width for a column
         // based on the minimum segment width on a Column
-        return 100;
+        
+        let minWidthOnColumn = 100;
+
+        for (let row = 0; row < rows; row++) {
+            if (data[row] && data[row][col]) {
+                const width = data[row][col].dimension?.width || 100;
+                if (minWidthOnColumn < width) {
+                    minWidthOnColumn = width;
+                }
+            } else {
+                minWidthOnColumn = MIN_SEGMENT_DIMENSION.width; // Default width if no data exists
+            }
+        }
+
+        // This division by 5 is from the calculation on the segment width code, that ensures that 
+        // a segment is visual well represented in the grid.
+        // Look at the Segment.tsx file for more details.
+        return minWidthOnColumn > MIN_SEGMENT_DIMENSION.width ? minWidthOnColumn / 5 : minWidthOnColumn;
     }
 
 
@@ -98,7 +115,7 @@ function GridDisplay() {
 
                 const { height } = getColumnDimension(colIdx);
                 return (
-                    <FirstCell key={`col-header-${colIdx}`} data={`Altura total: ${height}`} />
+                    <FirstCell key={`col-header-${colIdx}`} data={`Altura total: ${height}`} style={{ width: getMinColumnWidth(colIdx) }} />
                 )
             })}
 

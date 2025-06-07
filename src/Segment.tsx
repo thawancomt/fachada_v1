@@ -4,6 +4,11 @@ import VALID_STATES from "./STATES/States";
 import { PopupData, usePopup } from "./context/PopupContext";
 import { useFacadeContext } from "./context/FacadeContext";
 
+const MIN_SEGMENT_DIMENSION = {
+  width: 350,
+  height: 150,
+}
+
 interface SegmentProps {
   index: { x: number, y: number };
   gridRepresentation: string;
@@ -106,10 +111,12 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
           detailsRef.current.style.top = `${e.clientY + 10}px`;
         }
       }} 
-
+      // Note that the width and height are set to 1/5 of the dimension, adjust as needed
+      // This is just an example, you can change the logic to fit your needs
+      // In the FirstCell.tsx we use the same logic to calculate of the cell width, so keep it consistent
       style={{
-        width: dimension.width > 0 ? `${dimension.width / 5}px` : 'auto',
-        height: dimension.height > 0 ? `${dimension.height / 5}px` : 'auto',
+        width: dimension.width > 0 ? `${dimension.width / 5}px` : '350px',
+        height: dimension.height > 0 ? `${dimension.height / 5}px` : '150px',
       }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     >
       {
@@ -170,3 +177,4 @@ function Segment({ index, gridRepresentation }: SegmentProps) {
 }
 export default Segment;
 export { stateStyles };
+export { MIN_SEGMENT_DIMENSION };
